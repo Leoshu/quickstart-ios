@@ -219,7 +219,13 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 // the InstanceID token.
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
   NSLog(@"APNs token retrieved: %@", deviceToken);
-
+    
+    NSString *tokenString = [NSString stringWithFormat:@"%@",deviceToken];
+    // Replace '<', '>', '/'
+    NSCharacterSet *charDummy = [NSCharacterSet characterSetWithCharactersInString:@"<>? "];
+    tokenString = [[tokenString componentsSeparatedByCharactersInSet:charDummy] componentsJoinedByString:@""];
+    NSLog(@"Device Token: '%@'", tokenString);
+    
   // With swizzling disabled you must set the APNs token here.
   // [[FIRInstanceID instanceID] setAPNSToken:deviceToken type:FIRInstanceIDAPNSTokenTypeSandbox];
 }
@@ -227,6 +233,10 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 // [START connect_on_active]
 - (void)applicationDidBecomeActive:(UIApplication *)application {
   [self connectToFcm];
+    
+    // FIXME: This is not best way. The better way to do this is to make a function that subtract the badge number then make a UIButton to let the user to clear the badge.
+    // Clear badge.
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
 }
 // [END connect_on_active]
 
